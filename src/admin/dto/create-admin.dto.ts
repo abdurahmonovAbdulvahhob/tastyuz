@@ -45,6 +45,4 @@ export class CreateAdminDto {
   })
   is_creator: boolean;
 
-  @IsString()
-  hashed_refresh_token: string;
 }

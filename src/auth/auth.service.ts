@@ -118,7 +118,6 @@ export class AuthService {
       if (!admin) {
         throw new BadRequestException('Invalid refresh token2');
       }
-      admin.is_active = true;
       admin.hashed_refresh_token = null;
       admin.save();
 
@@ -190,7 +189,7 @@ export class AuthService {
   async updateCustomerRefreshToken(
     customerId: number,
     refresh_token: string,
-    activation_link: string,
+    activation_link?: string,
   ) {
     const hashed_refresh_token = await bcrypt.hash(refresh_token, 3);
     const updatedCustomer = await this.customerService.updateRefreshToken(
@@ -245,5 +244,97 @@ export class AuthService {
       access_token: tokens.access_token,
     };
     return response;
+  }
+
+  async signInCustomer(email: string, password: string, res: Response) {
+    const user = await this.customerService.findUserByEmail(email);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const isMatch = await bcrypt.compare(password, user.hashed_password);
+
+    if (!isMatch) {
+      throw new BadRequestException('Invalid password');
+    }
+
+    const tokens = await this.generateCustomerTokens(user);
+
+    await this.updateCustomerRefreshToken(user.id, tokens.refresh_token);
+    res.cookie('refresh_token', tokens.refresh_token, {
+      maxAge: +process.env.COOKIE_TIME,
+      httpOnly: true,
+    });
+
+    return {
+      message: 'User signed in succesfully',
+      id: user.id,
+      access_token: tokens.access_token,
+    };
+  }
+
+  async signOutCustomer(refresh_token: string, res: Response) {
+    try {
+      if (!refresh_token) {
+        throw new BadRequestException('Refresh token is required');
+      }
+      const payload = await this.jwtService.verify(refresh_token, {
+        secret: process.env.REFRESH_TOKEN_CUSTOMER_KEY,
+      });
+      if (!payload) {
+        throw new BadRequestException('Invalid refresh token1');
+      }
+      // console.log(payload)
+      const user = await this.customerService.findUserByEmail(payload.email);
+      if (!user) {
+        throw new BadRequestException('Invalid refresh token2');
+      }
+      user.hashed_refresh_token = null;
+      user.save();
+
+      res.clearCookie('refresh_token');
+
+      return { message: 'User signed  out succesfuly' };
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async refreshCustomerToken(refresh_token: string, res: Response) {
+    try {
+      const payload = await this.jwtService.verify(refresh_token, {
+        secret: process.env.REFRESH_TOKEN_CUSTOMER_KEY,
+      });
+      const customer = await this.customerService.findUserByEmail(payload.email);
+      if (!customer) {
+        throw new BadRequestException('Invalid refresh token');
+      }
+
+      const validRefreshToken = await bcrypt.compare(
+        refresh_token,
+        customer.hashed_refresh_token,
+      );
+
+      if (!validRefreshToken) {
+        throw new ForbiddenException('Invalid refresh token');
+      }
+
+      const tokens = await this.generateCustomerTokens(customer);
+      await this.updateCustomerRefreshToken(customer.id, tokens.refresh_token);
+      res.cookie('refresh_token', tokens.refresh_token, {
+        maxAge: +process.env.COOKIE_TIME,
+        httpOnly: true,
+      });
+
+      return {
+        message: 'Token refreshed successfully',
+        id: customer.id,
+        access_token: tokens.access_token,
+      };
+    } catch (error) {
+      console.log('refreshcustomer error',error);
+      throw new InternalServerErrorException();
+    }
   }
 }

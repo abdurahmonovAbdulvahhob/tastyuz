@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Res,
-  HttpCode,
-} from '@nestjs/common';
+import { Controller, Post, Body, Res, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAdminDto } from '../admin/dto/create-admin.dto';
 import { Response } from 'express';
@@ -12,6 +6,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SignInAdminDto } from './dto/sign-in-admin.dto';
 import { CookieGetter } from '../common/decorators';
 import { CreateCustomerDto } from '../customer/dto/create-customer.dto';
+import { SignInCustomerDto } from './dto/sign-in-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -90,5 +85,54 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.authService.signUpCustomer(createCustomerDto, res);
+  }
+
+  @ApiOperation({ summary: 'Sign in User' })
+  @ApiResponse({
+    status: 200,
+    description: 'Sign in',
+    type: Object,
+  })
+  @HttpCode(200)
+  @Post('signin-customer')
+  async signInCustomer(
+    @Body() signInCustomerDto: SignInCustomerDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.signInCustomer(
+      signInCustomerDto.email,
+      signInCustomerDto.password,
+      res,
+    );
+  }
+
+  @ApiOperation({ summary: 'Sign out User' })
+  @ApiResponse({
+    status: 200,
+    description: 'Sign out',
+    type: Object,
+  })
+  @HttpCode(200)
+  @Post('signout-customer')
+  async signOutCustomer(
+    @CookieGetter('refresh_token') refresh_token: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.signOutCustomer(refresh_token, res);
+  }
+
+  @ApiOperation({ summary: 'Refresh Token User' })
+  @ApiResponse({
+    status: 200,
+    description: 'Refresh',
+    type: Object,
+  })
+  @HttpCode(200)
+  @Post('refresh-customer')
+  async refreshCustomerToken(
+    @CookieGetter('refresh_token') refresh_token: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.refreshCustomerToken(refresh_token, res);
   }
 }
