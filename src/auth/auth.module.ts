@@ -3,9 +3,11 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { AdminModule } from '../admin/admin.module';
 import { JwtModule } from '@nestjs/jwt';
+import { CustomerModule } from '../customer/customer.module';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
-  imports: [AdminModule, JwtModule.register({})],
+  imports: [AdminModule, CustomerModule, MailModule,JwtModule.register({})],
   controllers: [AuthController],
   providers: [AuthService],
 })

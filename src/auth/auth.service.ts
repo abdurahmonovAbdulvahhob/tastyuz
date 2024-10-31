@@ -1,12 +1,23 @@
-import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Admin } from '../admin/models/admin.model';
 import { JwtService } from '@nestjs/jwt';
 import { AdminService } from '../admin/admin.service';
 import { Tokens } from '../common/types';
 import { CreateAdminDto } from '../admin/dto/create-admin.dto';
 import * as bcrypt from 'bcrypt';
+import * as uuid from 'uuid';
 import { Response } from 'express';
 import { SignInAdminDto } from './dto/sign-in-admin.dto';
+import { CreateCustomerDto } from '../customer/dto/create-customer.dto';
+import { CustomerService } from '../customer/customer.service';
+import { Customer } from '../customer/models/customer.model';
+import { MailService } from '../mail/mail.service';
 
 
 @Injectable()
@@ -14,6 +25,8 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly adminService: AdminService,
+    private readonly customerService: CustomerService,
+    private readonly mailService: MailService,
   ) {}
   async generateAdminTokens(admin: Admin): Promise<Tokens> {
     const payload = {
@@ -97,7 +110,7 @@ export class AuthService {
       const payload = await this.jwtService.verify(refresh_token, {
         secret: process.env.REFRESH_TOKEN_ADMIN_KEY,
       });
-      if (!payload){
+      if (!payload) {
         throw new BadRequestException('Invalid refresh token1');
       }
       // console.log(payload)
@@ -153,5 +166,84 @@ export class AuthService {
       console.log(error);
       throw new InternalServerErrorException();
     }
+  }
+
+  async generateCustomerTokens(customer: Customer): Promise<Tokens> {
+    const payload = {
+      id: customer.id,
+      email: customer.email,
+      is_active: customer.is_active,
+    };
+    const [access_token, refresh_token] = await Promise.all([
+      this.jwtService.sign(payload, {
+        secret: process.env.ACCESS_TOKEN_CUSTOMER_KEY,
+        expiresIn: process.env.ACCESS_TOKEN_TIME,
+      }),
+      this.jwtService.sign(payload, {
+        secret: process.env.REFRESH_TOKEN_CUSTOMER_KEY,
+        expiresIn: process.env.REFRESH_TOKEN_TIME,
+      }),
+    ]);
+    return { access_token, refresh_token };
+  }
+
+  async updateCustomerRefreshToken(
+    customerId: number,
+    refresh_token: string,
+    activation_link: string,
+  ) {
+    const hashed_refresh_token = await bcrypt.hash(refresh_token, 3);
+    const updatedCustomer = await this.customerService.updateRefreshToken(
+      customerId,
+      hashed_refresh_token,
+      activation_link,
+    );
+
+    return updatedCustomer;
+  }
+
+  async signUpCustomer(createCustomerDto: CreateCustomerDto, res: Response) {
+    const user = await this.customerService.findUserByEmail(
+      createCustomerDto.email,
+    );
+    if (user) {
+      throw new BadRequestException('User already exists');
+    }
+
+    if (createCustomerDto.password !== createCustomerDto.confirm_password) {
+      throw new BadRequestException('Passwords do not match');
+    }
+
+    const newUser = await this.customerService.create({
+      ...createCustomerDto,
+    });
+
+    const tokens = await this.generateCustomerTokens(newUser);
+
+    const activation_link = uuid.v4();
+    const updatedUser = await this.updateCustomerRefreshToken(
+      newUser.id,
+      tokens.refresh_token,
+      activation_link,
+    );
+
+    res.cookie('refresh_token', tokens.refresh_token, {
+      httpOnly: true,
+      maxAge: +process.env.COOKIE_TIME,
+    });
+
+    try {
+      await this.mailService.sendMail(updatedUser);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Error sending mail');
+    }
+
+    const response = {
+      message: 'Customer registered successfully',
+      customer: updatedUser,
+      access_token: tokens.access_token,
+    };
+    return response;
   }
 }

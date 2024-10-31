@@ -11,6 +11,7 @@ import { Response } from 'express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SignInAdminDto } from './dto/sign-in-admin.dto';
 import { CookieGetter } from '../common/decorators';
+import { CreateCustomerDto } from '../customer/dto/create-customer.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -75,5 +76,19 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.authService.refreshAdminToken(refresh_token, res);
+  }
+
+  @ApiOperation({ summary: 'Register new User' })
+  @ApiResponse({
+    status: 201,
+    description: 'Registered',
+    type: Object,
+  })
+  @Post('signup-customer')
+  async signUpCustomer(
+    @Body() createCustomerDto: CreateCustomerDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.signUpCustomer(createCustomerDto, res);
   }
 }

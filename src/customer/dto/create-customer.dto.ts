@@ -38,4 +38,13 @@ export class CreateCustomerDto {
   @IsString()
   @MinLength(4)
   password: string;
+
+  @ApiProperty({
+    example: 'userpassword',
+    description:
+      "User's confirm password,needs strong password(symbol,number,alphabet)",
+  })
+  @IsString()
+  @MinLength(4)
+  confirm_password: string;
 }

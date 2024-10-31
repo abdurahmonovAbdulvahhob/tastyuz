@@ -23,12 +23,20 @@ export class CustomerController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateCustomerDto: UpdateCustomerDto,
+  ) {
     return this.customerService.update(+id, updateCustomerDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.customerService.remove(+id);
+  }
+
+  @Get('activate/:link')
+  async activateUser(@Param('link') link: string) {
+    return this.customerService.activateUser(link);
   }
 }

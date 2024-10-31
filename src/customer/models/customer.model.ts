@@ -14,7 +14,7 @@ interface ICustomerCreationAttr {
   last_name: string;
   email: string;
   phone: string;
-  password: string;
+  hashed_password:string;
   is_active: string;
 }
 
@@ -68,7 +68,7 @@ export class Customer extends Model<Customer, ICustomerCreationAttr> {
   @Column({
     type: DataType.STRING,
   })
-  password: string;
+  hashed_password: string;
 
   @ApiProperty({
     example: '+998900333422',
@@ -78,6 +78,16 @@ export class Customer extends Model<Customer, ICustomerCreationAttr> {
     type: DataType.STRING,
   })
   phone: string;
+
+  @Column({
+    type: DataType.STRING,
+  })
+  hashed_refresh_token: string;
+
+  @Column({
+    type: DataType.STRING,
+  })
+  activation_link: string;
 
   @ApiProperty({
     example: 'false',
