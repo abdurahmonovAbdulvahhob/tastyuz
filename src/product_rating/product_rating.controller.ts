@@ -7,27 +7,27 @@ import { UpdateProductRatingDto } from './dto/update-product_rating.dto';
 export class ProductRatingController {
   constructor(private readonly productRatingService: ProductRatingService) {}
 
-  @Post()
+  @Post('create')
   create(@Body() createProductRatingDto: CreateProductRatingDto) {
     return this.productRatingService.create(createProductRatingDto);
   }
 
-  @Get()
+  @Get('get')
   findAll() {
     return this.productRatingService.findAll();
   }
 
-  @Get(':id')
+  @Get('get/:id')
   findOne(@Param('id') id: string) {
     return this.productRatingService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Patch('update/:id')
   update(@Param('id') id: string, @Body() updateProductRatingDto: UpdateProductRatingDto) {
     return this.productRatingService.update(+id, updateProductRatingDto);
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.productRatingService.remove(+id);
   }

@@ -9,6 +9,8 @@ import { ShipperModule } from './shipper/shipper.module';
 import { ProductModule } from './product/product.module';
 import { CustomerModule } from './customer/customer.module';
 import { ProductRatingModule } from './product_rating/product_rating.module';
+import { ProductCommentModule } from './product_comment/product_comment.module';
+import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { ProductRatingModule } from './product_rating/product_rating.module';
     ProductModule,
     CustomerModule,
     ProductRatingModule,
+    ProductCommentModule,
+    WishlistModule,
   ],
   controllers: [],
   providers: [],

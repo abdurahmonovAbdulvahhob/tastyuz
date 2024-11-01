@@ -2,12 +2,14 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { Product } from '../../product/models/product.model';
 import { ProductRating } from '../../product_rating/models/product_rating.model';
+import { ProductComment } from '../../product_comment/models/product_comment.model';
 
 interface ICustomerCreationAttr {
   first_name: string;
@@ -100,6 +102,9 @@ export class Customer extends Model<Customer, ICustomerCreationAttr> {
   })
   is_active: boolean;
 
-  @BelongsToMany(() => Product, () => ProductRating)
-  products: Product[];
+  @HasMany(() => ProductRating)
+  product_ratings: ProductRating[];
+
+  @HasMany(() => ProductComment)
+  product_comments: ProductComment[];
 }
