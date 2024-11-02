@@ -11,6 +11,9 @@ import { CustomerModule } from './customer/customer.module';
 import { ProductRatingModule } from './product_rating/product_rating.module';
 import { ProductCommentModule } from './product_comment/product_comment.module';
 import { WishlistModule } from './wishlist/wishlist.module';
+import { CartModule } from './cart/cart.module';
+import { CartItemModule } from './cart_item/cart_item.module';
+import { OrderAddressModule } from './order_address/order_address.module';
 
 @Module({
   imports: [
@@ -37,6 +40,9 @@ import { WishlistModule } from './wishlist/wishlist.module';
     ProductRatingModule,
     ProductCommentModule,
     WishlistModule,
+    CartModule,
+    CartItemModule,
+    OrderAddressModule,
   ],
   controllers: [],
   providers: [],

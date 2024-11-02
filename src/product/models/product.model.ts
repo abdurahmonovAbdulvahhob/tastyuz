@@ -4,6 +4,7 @@ import { ProductCategory } from "../../product_category/models/product_category.
 import { Customer } from "../../customer/models/customer.model";
 import { ProductRating } from "../../product_rating/models/product_rating.model";
 import { ProductComment } from "../../product_comment/models/product_comment.model";
+import { CartItem } from "../../cart_item/models/cart_item.model";
 
 interface IProductCreationAttr{
   name: string;
@@ -101,4 +102,7 @@ export class Product extends Model<Product, IProductCreationAttr> {
 
   @HasMany(() => ProductComment)
   product_comments: ProductComment[];
+
+  @HasMany(() => CartItem)
+  cart_items: CartItem[];
 }
