@@ -11,6 +11,8 @@ import { Product } from '../../product/models/product.model';
 import { ProductRating } from '../../product_rating/models/product_rating.model';
 import { ProductComment } from '../../product_comment/models/product_comment.model';
 import { Cart } from '../../cart/models/cart.model';
+import { OrderAddress } from '../../order_address/models/order_address.model';
+import { Order } from '../../order/models/order.model';
 
 interface ICustomerCreationAttr {
   first_name: string;
@@ -111,4 +113,12 @@ export class Customer extends Model<Customer, ICustomerCreationAttr> {
 
   @HasMany(() => Cart)
   carts: Cart[];
+
+  @HasMany(() => OrderAddress)
+  order_addresses: OrderAddress[];
+
+  @HasMany(()=> Order)
+  orders: Order[]
+
+  
 }

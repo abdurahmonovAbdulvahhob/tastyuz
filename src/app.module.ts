@@ -14,6 +14,8 @@ import { WishlistModule } from './wishlist/wishlist.module';
 import { CartModule } from './cart/cart.module';
 import { CartItemModule } from './cart_item/cart_item.module';
 import { OrderAddressModule } from './order_address/order_address.module';
+import { OrderModule } from './order/order.module';
+import { OrderItemModule } from './order_item/order_item.module';
 
 @Module({
   imports: [
@@ -43,6 +45,8 @@ import { OrderAddressModule } from './order_address/order_address.module';
     CartModule,
     CartItemModule,
     OrderAddressModule,
+    OrderModule,
+    OrderItemModule,
   ],
   controllers: [],
   providers: [],

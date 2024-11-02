@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Order } from '../../order/models/order.model';
 
 interface IShipperCreationAttr {
   name: string;
@@ -47,4 +48,6 @@ export class Shipper extends Model<Shipper, IShipperCreationAttr> {
   })
   phone: string;
 
+  @HasMany(()=>Order)
+  orders: Order[]
 }

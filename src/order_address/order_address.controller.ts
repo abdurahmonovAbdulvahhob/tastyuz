@@ -7,27 +7,27 @@ import { UpdateOrderAddressDto } from './dto/update-order_address.dto';
 export class OrderAddressController {
   constructor(private readonly orderAddressService: OrderAddressService) {}
 
-  @Post()
+  @Post('create')
   create(@Body() createOrderAddressDto: CreateOrderAddressDto) {
     return this.orderAddressService.create(createOrderAddressDto);
   }
 
-  @Get()
+  @Get('get')
   findAll() {
     return this.orderAddressService.findAll();
   }
 
-  @Get(':id')
+  @Get('get/:id')
   findOne(@Param('id') id: string) {
     return this.orderAddressService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Patch('update/:id')
   update(@Param('id') id: string, @Body() updateOrderAddressDto: UpdateOrderAddressDto) {
     return this.orderAddressService.update(+id, updateOrderAddressDto);
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.orderAddressService.remove(+id);
   }

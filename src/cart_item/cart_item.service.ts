@@ -20,7 +20,10 @@ export class CartItemService {
   }
 
   update(id: number, updateCartItemDto: UpdateCartItemDto) {
-    return this.cart_itemModel.update(updateCartItemDto,{where: {id}});
+    return this.cart_itemModel.update(updateCartItemDto, {
+      where: { id },
+      returning: true,
+    });
   }
 
   remove(id: number) {
