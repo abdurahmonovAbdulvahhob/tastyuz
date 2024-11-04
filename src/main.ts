@@ -12,9 +12,9 @@ async function start() {
     app.use(cookieParser());
 
     const config = new DocumentBuilder()
-      .setTitle('MyTicket Project')
+      .setTitle('TastyUZ')
       .setDescription(
-        "iTicket saytining o'quv uchun yaratilgan REST API proyekti",
+        "TastyUZ saytining Swagger REST API proyekti",
       )
       .setVersion('1.0')
       .addTag('nestjs,validation,swagger,sequelize,pg,guard')

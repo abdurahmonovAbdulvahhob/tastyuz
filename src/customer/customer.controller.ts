@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AdminGuard, UserGuard } from '../common/guards';
 
 @Controller('customer')
 export class CustomerController {
@@ -14,6 +15,7 @@ export class CustomerController {
     description: 'Create user',
     type: Object,
   })
+  @UseGuards(AdminGuard)
   @Post('create')
   create(@Body() createCustomerDto: CreateCustomerDto) {
     return this.customerService.create(createCustomerDto);
@@ -25,6 +27,7 @@ export class CustomerController {
     description: 'get user',
     type: Object,
   })
+  @UseGuards(AdminGuard)
   @Get('get')
   findAll() {
     return this.customerService.findAll();
@@ -36,6 +39,7 @@ export class CustomerController {
     description: 'get 1  user',
     type: Object,
   })
+  @UseGuards(UserGuard)
   @Get('get/:id')
   findOne(@Param('id') id: string) {
     return this.customerService.findOne(+id);
@@ -47,6 +51,7 @@ export class CustomerController {
     description: 'update user',
     type: Object,
   })
+  @UseGuards(UserGuard)
   @Patch('update/:id')
   update(
     @Param('id') id: string,
@@ -61,6 +66,7 @@ export class CustomerController {
     description: 'delete user',
     type: Object,
   })
+  @UseGuards(AdminGuard)
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.customerService.remove(+id);

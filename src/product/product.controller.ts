@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AdminGuard } from '../common/guards';
+import { Public } from '../common/decorators';
 
+@UseGuards(AdminGuard)
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -25,6 +28,7 @@ export class ProductController {
     description: 'get all product',
     type: Object,
   })
+  @Public()
   @Get('get')
   findAll() {
     return this.productService.findAll();
@@ -36,6 +40,7 @@ export class ProductController {
     description: 'get 1 product',
     type: Object,
   })
+  @Public()
   @Get('get/:id')
   findOne(@Param('id') id: string) {
     return this.productService.findOne(+id);

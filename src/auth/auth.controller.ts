@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, Res, HttpCode, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAdminDto } from '../admin/dto/create-admin.dto';
 import { Response } from 'express';
@@ -42,7 +42,7 @@ export class AuthController {
   ) {
     return this.authService.signInAdmin(signInAdminDto, res);
   }
-
+  
   @ApiOperation({ summary: 'Sign out Admin' })
   @ApiResponse({
     status: 200,
