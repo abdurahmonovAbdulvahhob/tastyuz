@@ -28,7 +28,7 @@ export class CreateOrderDto {
     description: 'Status of the order',
   })
   @IsString()
-  status: string;
+  status: 'new' | 'pending' | 'ended';
 
   @ApiProperty({
     example: 20,

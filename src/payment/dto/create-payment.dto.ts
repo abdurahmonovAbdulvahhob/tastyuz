@@ -28,7 +28,7 @@ export class CreatePaymentDto {
     description: 'status of the payment',
   })
   @IsString()
-  status: string;
+  status: 'pending' | 'completed' | 'failed' | 'cancelled';
 
   @ApiProperty({
     example: '17.02.2023',

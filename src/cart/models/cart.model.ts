@@ -4,7 +4,7 @@ import { CartItem } from "../../cart_item/models/cart_item.model";
 
 interface ICartCreationAttr{
   customerId: number;
-  status: string;
+  status: 'yangi' | 'jarayonda' | 'tugallangan';
 }
 
 @Table({tableName: "cart"})
@@ -23,8 +23,7 @@ export class Cart extends Model<Cart,ICartCreationAttr> {
   customerId: number;
 
   @Column({
-    type: DataType.STRING(100),
-    defaultValue: "active"
+    type: DataType.ENUM('yangi','jarayonda','tugallangan')
   })
   status: string;
 

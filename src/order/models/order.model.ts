@@ -9,7 +9,7 @@ interface IOrderCreationAttr {
   customerId: number;
   order_addressId: number;
   shipperId: number;
-  status: string;
+  status: 'new' | 'pending' | 'ended';
   total_price: number;
 }
 
@@ -61,7 +61,7 @@ export class Order extends Model<Order, IOrderCreationAttr> {
     description: 'Status of the order',
   })
   @Column({
-    type: DataType.STRING(100),
+    type: DataType.ENUM('new' , 'pending' , 'ended'),
   })
   status: string;
 
@@ -83,6 +83,6 @@ export class Order extends Model<Order, IOrderCreationAttr> {
   @BelongsTo(() => Shipper)
   shipper: Shipper;
 
-  @HasMany(()=>OrderItem)
-  order_items: OrderItem[]
+  @HasMany(() => OrderItem)
+  order_items: OrderItem[];
 }

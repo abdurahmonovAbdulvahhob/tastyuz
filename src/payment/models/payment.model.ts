@@ -14,7 +14,7 @@ interface IPaymentCreationAttr {
   orderId: number;
   payment_methodId: number;
   amount: number;
-  status: string;
+  status: 'pending' | 'completed' | 'failed' | 'cancelled';
   transaction_date: string;
 }
 
@@ -61,11 +61,11 @@ export class Payment extends Model<Payment, IPaymentCreationAttr> {
   amount: number;
 
   @ApiProperty({
-    example: 'payed',
+    example: 'pending',
     description: 'status of the payment',
   })
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM('pending' , 'completed' , 'failed' , 'cancelled'),
   })
   status: string;
 
