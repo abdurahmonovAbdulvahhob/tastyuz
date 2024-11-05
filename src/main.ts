@@ -5,17 +5,18 @@ import { WinstonModule } from 'nest-winston';
 import { instance } from './logger/winston.logger';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
+import { AllExceptionsFilter } from './common/helpers/error-handler';
+import { winstonConfig } from './common/helpers/winston.logger';
 
 async function start() {
   try {
     const PORT = process.env.PORT || 3003;
     const app = await NestFactory.create(AppModule, {
-      logger: WinstonModule.createLogger({
-        instance: instance,
-      }),
+      logger: WinstonModule.createLogger(winstonConfig),
     });
     app.useGlobalPipes(new ValidationPipe());
     app.use(cookieParser());
+    app.useGlobalFilters(new AllExceptionsFilter)
 
     const config = new DocumentBuilder()
       .setTitle('TastyUZ')
