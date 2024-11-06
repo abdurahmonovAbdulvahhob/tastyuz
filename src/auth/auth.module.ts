@@ -7,7 +7,7 @@ import { CustomerModule } from '../customer/customer.module';
 import { MailModule } from '../mail/mail.module';
 
 @Module({
-  imports: [AdminModule, CustomerModule, MailModule,JwtModule.register({})],
+  imports: [AdminModule, CustomerModule, MailModule,JwtModule.register({global:true})],
   controllers: [AuthController],
   providers: [AuthService],
 })
